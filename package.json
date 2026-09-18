@@ -1,0 +1,46 @@
+{
+  "name": "opencode2-subscription-quota-plugin",
+  "version": "0.1.0",
+  "description": "OpenCode 2 plugin that shows provider subscription quota in the TUI sidebar, with /quota and /quota_diag.",
+  "keywords": [
+    "claude",
+    "codex",
+    "opencode",
+    "opencode2",
+    "plugin",
+    "quota",
+    "tui"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/walotta/opencode2-subscription-quota-plugin.git"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./tui": "./tui.tsx"
+  },
+  "files": [
+    "index.ts",
+    "quota.ts",
+    "tui.tsx",
+    "sync-auth.mjs"
+  ],
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@opencode/plugin": "2.0.8",
+    "@types/node": "26.6.1",
+    "typescript": "7.0.2"
+  },
+  "peerDependencies": {
+    "@opentui/core": ">=0.5.8",
+    "@opentui/solid": ">=0.5.8",
+    "solid-js": ">=1.9.0"
+  }
+}
