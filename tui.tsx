@@ -8,14 +8,12 @@
 // this plugin keeps upstream as the data source and only re-implements the V2
 // presentation layer.
 //
-// Type-only import, so it is erased at runtime. That matters, because the
-// package name moves between opencode2 builds: beta-19242 resolved
-// "@opencode-ai/plugin/tui" and beta-19398 resolves "@opencode/plugin/tui" (the
-// CLI package was renamed from @opencode-ai/cli to @opencode/cli at the same
-// time). A runtime `import { Plugin }` would therefore break on one build or the
-// other. Exporting a plain object sidesteps the import completely: Plugin.define
-// is only an identity function, define(p: Definition): Definition.
-import type { Context } from "@opencode/plugin/tui/context"
+// Import the specifier OpenCode aliases at runtime. A deeper subpath such as
+// "@opencode/plugin/tui/context" is not aliased: it resolves only when
+// @opencode/plugin happens to be installed next to the plugin, so an installed
+// package fails to load its TUI half, silently and with nothing in the log.
+// @opencode/plugin stays a devDependency, for typechecking only.
+import { Plugin } from "@opencode/plugin/tui"
 import { bar, DEFAULT_WATCH, diagnose, fit, format, load, PLUGIN_ID, rows, type Row } from "./quota.ts"
 
 // Upstream keeps its own provider-side cache, so polling faster mostly re-reads
@@ -29,9 +27,9 @@ const BAR_WIDTH = 8
 
 type State = { rows: Row[]; error: string | null; loaded: boolean }
 
-export default {
+export default Plugin.define({
   id: PLUGIN_ID,
-  setup(context: Context) {
+  setup(context) {
     const watch: Record<string, string> = {
       ...DEFAULT_WATCH,
       ...((context.options?.watch as Record<string, string> | undefined) ?? {}),
@@ -162,4 +160,4 @@ export default {
       stopCommands()
     }
   },
-}
+})
