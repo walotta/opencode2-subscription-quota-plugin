@@ -37,11 +37,16 @@ re-implements the presentation layer for OpenCode 2.
 
 ## Install
 
-Clone the repository and point OpenCode at the checkout:
+Clone the repository into OpenCode's global plugin directory, which is discovered
+automatically:
 
 ```sh
-git clone https://github.com/walotta/opencode2-subscription-quota-plugin.git
+git clone https://github.com/walotta/opencode2-subscription-quota-plugin.git \
+  ~/.config/opencode/plugins/quota
 ```
+
+Discovery loads both halves, so no `opencode.json(c)` entry is needed. Any
+directory works as well if it is listed in `plugins`:
 
 ```jsonc
 // opencode.jsonc
@@ -58,10 +63,7 @@ Update it with `git pull`.
 > CLI never loads the TUI half of a Git-sourced package: the sidebar and both
 > commands are missing, with nothing in the log. A path that points inside the npm
 > cache's `node_modules` behaves the same way. Until that is fixed upstream, a
-> directory path is the form that works.
-
-The package exports both a server entrypoint (`.`) and a TUI entrypoint
-(`./tui`), so this single entry loads both halves.
+> plain directory is the form that works.
 
 ## Configuration
 
@@ -74,7 +76,7 @@ half, which ignores them:
 {
   "plugins": [
     {
-      "package": "/path/to/opencode2-subscription-quota-plugin",
+      "package": "./plugins/quota",
       "options": {
         "sidebar": { "anthropic": "Claude", "openai": "Codex" },
         "sync": true
@@ -84,8 +86,9 @@ half, which ignores them:
 }
 ```
 
-Use the same path in both files. The CLI still loads the TUI half once, and the
-`cli.json` options apply.
+The path resolves relative to the configuration directory, and must point at the
+same plugin OpenCode already loaded. The CLI still loads the TUI half once, and
+these options apply.
 
 | Option | Default | Effect |
 | --- | --- | --- |
