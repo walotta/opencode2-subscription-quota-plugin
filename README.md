@@ -37,17 +37,11 @@ re-implements the presentation layer for OpenCode 2.
 
 ## Install
 
-```sh
-opencode2 plugin add github:walotta/opencode2-subscription-quota-plugin
-```
-
-SSH and pinned refs work too:
+Clone the repository and point OpenCode at the checkout:
 
 ```sh
-opencode2 plugin add 'git+ssh://git@github.com/walotta/opencode2-subscription-quota-plugin.git#main'
+git clone https://github.com/walotta/opencode2-subscription-quota-plugin.git
 ```
-
-Or point at a checkout while working on the plugin:
 
 ```jsonc
 // opencode.jsonc
@@ -56,9 +50,18 @@ Or point at a checkout while working on the plugin:
 }
 ```
 
+Update it with `git pull`.
+
+> [!NOTE]
+> `opencode2 plugin add github:walotta/opencode2-subscription-quota-plugin`
+> installs the package and the server half loads, but on `v0.0.0-beta-19425` the
+> CLI never loads the TUI half of a Git-sourced package: the sidebar and both
+> commands are missing, with nothing in the log. A path that points inside the npm
+> cache's `node_modules` behaves the same way. Until that is fixed upstream, a
+> directory path is the form that works.
+
 The package exports both a server entrypoint (`.`) and a TUI entrypoint
-(`./tui`), so an entry in `opencode.json(c)` is enough: the CLI loads the TUI
-half automatically and no `cli.json` entry is needed.
+(`./tui`), so this single entry loads both halves.
 
 ## Configuration
 
@@ -71,7 +74,7 @@ half, which ignores them:
 {
   "plugins": [
     {
-      "package": "opencode2-subscription-quota-plugin",
+      "package": "/path/to/opencode2-subscription-quota-plugin",
       "options": {
         "sidebar": { "anthropic": "Claude", "openai": "Codex" },
         "sync": true
@@ -81,8 +84,8 @@ half, which ignores them:
 }
 ```
 
-Listing the package in both files is safe: the CLI still loads the TUI half once,
-and the `cli.json` options apply.
+Use the same path in both files. The CLI still loads the TUI half once, and the
+`cli.json` options apply.
 
 | Option | Default | Effect |
 | --- | --- | --- |
