@@ -64,21 +64,21 @@ export default Plugin.define({
     const timer = setInterval(() => void refresh(), REFRESH_MS)
 
     function colorFor(percent: number | null) {
-      if (percent === null) return context.theme.text.subdued
-      if (percent < 15) return context.theme.text.feedback.error.default
-      if (percent < 40) return context.theme.text.feedback.warning.default
-      return context.theme.text.default
+      if (percent === null) return context.theme.text.muted
+      if (percent < 15) return context.theme.text.feedback.error.base
+      if (percent < 40) return context.theme.text.feedback.warning.base
+      return context.theme.text.base
     }
 
     const stopSidebar = context.ui.slot({
       append: "sidebar.content",
       render: () => (
         <box flexDirection="column">
-          <text fg={context.theme.text.subdued}>Quota</text>
+          <text fg={context.theme.text.muted}>Quota</text>
           {state.error !== null ? (
-            <text fg={context.theme.text.feedback.error.default}>{state.error}</text>
+            <text fg={context.theme.text.feedback.error.base}>{state.error}</text>
           ) : !state.loaded ? (
-            <text fg={context.theme.text.subdued}>loading…</text>
+            <text fg={context.theme.text.muted}>loading…</text>
           ) : (
             state.rows.map((row) => (
               <text fg={colorFor(row.percent)}>
