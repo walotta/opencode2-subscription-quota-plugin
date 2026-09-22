@@ -34,7 +34,8 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@opencode/plugin": "2.0.8",
+    "@opencode/plugin": "2.0.14",
+    "@opencode/theme": "2.0.14",
     "@types/node": "26.6.1",
     "typescript": "7.0.2"
   },
