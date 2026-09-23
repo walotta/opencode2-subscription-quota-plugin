@@ -168,7 +168,7 @@ export type Row = {
 // Upstream reports some windows with a sub-plan in the name and no `window`
 // field, e.g. "Claude Fable Weekly" beside "Claude Weekly". Keeping only the
 // provider label would render both as "Claude", so derive the label from the
-// name: the sub-plan keeps its own name and the provider shrinks to an initial.
+// name: the sub-plan stands on its own, without repeating the provider.
 function variantLabel(name: string, short: string): string | undefined {
   const words = name.split(/\s+/).filter(Boolean)
   const rest = words[0]?.toLowerCase() === short.toLowerCase() ? words.slice(1) : words
@@ -177,7 +177,7 @@ function variantLabel(name: string, short: string): string | undefined {
   const window = WINDOW_LABELS[last] ?? (/^\d+[hdwm]$/i.test(last) ? last : undefined)
   const variant = (window ? rest.slice(0, -1) : rest).join(" ")
   if (!variant) return undefined
-  return `${variant}(${short.slice(0, 1)})${window ? ` ${window}` : ""}`
+  return window ? `${variant} ${window}` : variant
 }
 
 // Compact rows for the sidebar: only percentage windows, because value-only rows
