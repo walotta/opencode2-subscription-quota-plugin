@@ -165,6 +165,21 @@ export type Row = {
   at: string
 }
 
+// Upstream reports some windows with a sub-plan in the name and no `window`
+// field, e.g. "Claude Fable Weekly" beside "Claude Weekly". Keeping only the
+// provider label would render both as "Claude", so derive the label from the
+// name: the sub-plan keeps its own name and the provider shrinks to an initial.
+function variantLabel(name: string, short: string): string | undefined {
+  const words = name.split(/\s+/).filter(Boolean)
+  const rest = words[0]?.toLowerCase() === short.toLowerCase() ? words.slice(1) : words
+  if (!rest.length) return undefined
+  const last = rest[rest.length - 1]!
+  const window = WINDOW_LABELS[last] ?? (/^\d+[hdwm]$/i.test(last) ? last : undefined)
+  const variant = (window ? rest.slice(0, -1) : rest).join(" ")
+  if (!variant) return undefined
+  return `${variant}(${short.slice(0, 1)})${window ? ` ${window}` : ""}`
+}
+
 // Compact rows for the sidebar: only percentage windows, because value-only rows
 // (Copilot's "quota details unavailable") have nothing to plot and are left to
 // /quota. Without `providers` every provider that reports a percentage is shown.
@@ -188,8 +203,11 @@ export function rows(report: Report, providers?: Record<string, string>, now = D
       if (entry.renderType !== "percent" || typeof entry.percentRemaining !== "number") continue
       found = true
       const window = entry.window ? (WINDOW_LABELS[entry.window] ?? entry.window) : ""
+      const label = window
+        ? `${short} ${window}`
+        : ((entry.name && variantLabel(entry.name, short)) ?? short)
       out.push({
-        label: `${short} ${window}`.trim(),
+        label,
         percent: Math.round(entry.percentRemaining),
         at: clock(entry.resetAt, now),
       })

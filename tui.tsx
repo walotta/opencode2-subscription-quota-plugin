@@ -28,9 +28,10 @@ import { bar, DEFAULT_WATCH, diagnose, fit, format, load, PLUGIN_ID, rows, type 
 // the same numbers. Five minutes keeps the sidebar current without hammering.
 const REFRESH_MS = 5 * 60 * 1000
 
-// The sidebar column is about 37 wide. label(10) + bar(8) + " 100%" + reset(9,
-// e.g. "Tue 07:59") lands at 34.
-const LABEL_WIDTH = 10
+// The sidebar column is about 37 wide. label(11) + bar(8) + " 100%" + reset(9,
+// e.g. "Tue 07:59") lands at 35. The label has to hold a sub-plan row such as
+// "Fable(C) 7d".
+const LABEL_WIDTH = 11
 const BAR_WIDTH = 8
 
 type State = { rows: Row[]; error: string | null; loaded: boolean }
