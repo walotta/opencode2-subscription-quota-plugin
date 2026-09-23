@@ -1,3 +1,11 @@
+/** @jsxImportSource @opentui/solid */
+// This pragma is what makes the plugin work once it is installed. OpenCode
+// applies its own JSX settings only to files outside node_modules; for an
+// installed package the transpiler falls back to the react runtime and the load
+// fails with "Cannot find package 'react'", taking the sidebar and both commands
+// with it. @opentui/solid is a peer dependency, so the runtime resolves beside
+// the installed package.
+//
 // Show subscription quota inside the OpenCode V2 TUI: a persistent sidebar panel
 // plus /quota and /quota_diag.
 //
