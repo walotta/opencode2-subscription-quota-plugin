@@ -144,6 +144,11 @@ What it does:
 through its own credential fallback chain, and other plugins may own that
 `auth.json` entry. Pass it explicitly if you want it mirrored.
 
+Switching the active account for a provider replaces its `auth.json` entry
+outright, so quota follows the account OpenCode is currently using. Within one
+account the mirror only moves forward, and never overwrites a token that expires
+later than the one it would write.
+
 Set `"sync": false` to disable the mirror completely. Quota for providers that
 still authenticate through `auth.json` may then read as expired.
 

@@ -114,9 +114,18 @@ for (const provider of providers) {
   const entry = toV1(readV2Credential(db, provider))
   if (!entry) continue
   const current = auth[provider]
-  // Only move forward. A V1-side login can legitimately be the fresher one.
-  if (current?.expires && current.expires >= entry.expires) continue
-  auth[provider] = { ...current, ...entry }
+  // Only move forward within one account: a V1-side login can legitimately be
+  // the fresher one. A different active account has to replace the entry
+  // outright, or switching accounts leaves the old token in place whenever it
+  // happens to expire later. Accounts are indistinguishable without an id on
+  // both sides, so fall back to comparing expiry alone.
+  const sameAccount = !current?.accountId || !entry.accountId || current.accountId === entry.accountId
+  if (sameAccount) {
+    if (current?.expires && current.expires >= entry.expires) continue
+    auth[provider] = { ...current, ...entry }
+  } else {
+    auth[provider] = entry
+  }
   updated.push(`${provider} -> ${new Date(entry.expires).toISOString().slice(0, 19)}Z`)
 }
 db.close()
