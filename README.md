@@ -17,7 +17,7 @@ within a week, `09-30 19:00` beyond that.
 ## Why this exists
 
 [`@slkiser/opencode-quota`](https://github.com/slkiser/opencode-quota) is an
-OpenCode 1 plugin. Release 4.10.0 still peer-depends on `@opencode-ai/plugin`
+OpenCode 1 plugin. Release 4.10.1 still peer-depends on `@opencode-ai/plugin`
 and fails to load in OpenCode 2 as a TUI plugin. Upstream V2 support is tracked
 in [issue #229](https://github.com/slkiser/opencode-quota/issues/229) and
 [PR #196](https://github.com/slkiser/opencode-quota/pull/196), both open at the
@@ -28,8 +28,7 @@ re-implements the presentation layer for OpenCode 2.
 
 ## Requirements
 
-- OpenCode 2. Developed against `v0.0.0-beta-19425`; the plugin API is still in
-  beta and later builds may need adjustments.
+- OpenCode 2. Developed against `v2.0.14`.
 - The upstream CLI on `PATH`: `npm install -g @slkiser/opencode-quota`.
 - Node.js 22.13 or newer, and only for the optional credential mirror described
   below. That is the first version where `node:sqlite` works without
@@ -37,15 +36,22 @@ re-implements the presentation layer for OpenCode 2.
 
 ## Install
 
-Clone the repository into OpenCode's global plugin directory, which is discovered
-automatically:
+Install it as a package:
+
+```sh
+opencode2 plugin add github:walotta/opencode2-subscription-quota-plugin
+```
+
+Or clone the repository into OpenCode's global plugin directory, which is
+discovered automatically and travels with a synchronized configuration
+directory:
 
 ```sh
 git clone https://github.com/walotta/opencode2-subscription-quota-plugin.git \
   ~/.config/opencode/plugins/quota
 ```
 
-Discovery loads both halves, so no `opencode.json(c)` entry is needed. Any
+Discovery loads both halves, so no `opencode.json(c)` entry is needed. Any other
 directory works as well if it is listed in `plugins`:
 
 ```jsonc
@@ -55,15 +61,8 @@ directory works as well if it is listed in `plugins`:
 }
 ```
 
-Update it with `git pull`.
-
-> [!NOTE]
-> `opencode2 plugin add github:walotta/opencode2-subscription-quota-plugin`
-> installs the package and the server half loads, but on `v0.0.0-beta-19425` the
-> CLI never loads the TUI half of a Git-sourced package: the sidebar and both
-> commands are missing, with nothing in the log. A path that points inside the npm
-> cache's `node_modules` behaves the same way. Until that is fixed upstream, a
-> plain directory is the form that works.
+Update a package install with `opencode2 plugin update`, and a clone with
+`git pull`.
 
 ## Configuration
 
@@ -76,7 +75,7 @@ half, which ignores them:
 {
   "plugins": [
     {
-      "package": "./plugins/quota",
+      "package": "github:walotta/opencode2-subscription-quota-plugin",
       "options": {
         "sidebar": { "anthropic": "Claude", "openai": "Codex" },
         "sync": true
@@ -86,9 +85,10 @@ half, which ignores them:
 }
 ```
 
-The path resolves relative to the configuration directory, and must point at the
-same plugin OpenCode already loaded. The CLI still loads the TUI half once, and
-these options apply.
+Name the plugin the same way it was installed: the package specifier above, or
+the directory for a clone. A path resolves relative to the configuration
+directory, so `./plugins/quota` keeps working on every machine that carries the
+configuration. The CLI still loads the TUI half once, and these options apply.
 
 | Option | Default | Effect |
 | --- | --- | --- |
@@ -170,6 +170,7 @@ OpenCode discovers the package as a plugin with both halves.
 | A provider shows `no data` | Run `/quota_diag`. Upstream reports there whether the provider is configured and why it returned nothing. |
 | `Token expired` after logging in | The upstream CLI read a stale `auth.json`. Check the `credential sync:` line at the top of `/quota_diag`, and confirm `node` is on `PATH`. |
 | Sidebar rows are missing | Only percentage windows are plotted. Check `/quota` for value-only providers. |
+| The sidebar and both commands are missing | The CLI half failed to load. `grep role=cli ~/.local/share/opencode/log/opencode.log \| grep plugin` reports the reason, from OpenCode 2.0.14 on; earlier builds logged nothing for it. |
 | Long provider names truncated | Providers without a built-in short label use their provider id, trimmed to the column. Give them names with `options.sidebar`. |
 
 ## Credits
