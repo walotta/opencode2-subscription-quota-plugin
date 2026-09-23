@@ -1,6 +1,6 @@
 {
   "name": "opencode2-subscription-quota-plugin",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "OpenCode 2 plugin that shows provider subscription quota in the TUI sidebar, with /quota and /quota_diag.",
   "keywords": [
     "claude",
